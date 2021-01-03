@@ -1,0 +1,17 @@
+syntax = "proto3";
+package CompartirZF;
+
+service CompartirZFService {
+    rpc CompartirZF(Compartir) returns (Respuesta) {}
+}
+
+message Compartir {
+    bytes Content = 1;
+    string Name = 2;
+    string IP = 3;
+    string reloj = 4;
+}
+
+message Respuesta {
+    string reloj = 1;
+}

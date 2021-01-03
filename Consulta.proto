@@ -1,0 +1,19 @@
+syntax = "proto3";
+package Consulta;
+
+service ConsultaClienteService {
+    rpc ConsultaCliente(Consulta) returns (Respuesta) {}
+}
+
+service ConsultaBrokerService {
+    rpc ConsultaBroker(Consulta) returns (Respuesta) {}
+}
+
+message Consulta {
+    string NombreDominio = 1;
+}
+
+message Respuesta {
+    string IP = 1;
+    string Reloj = 2;
+}

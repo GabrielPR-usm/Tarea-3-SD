@@ -1,0 +1,24 @@
+syntax = "proto3";
+package ModificarZF;
+
+service ModificarZFRequestService {
+    rpc ModificarZFRequest(Modificacion) returns (RespuestaBroker) {}
+}
+
+service ModificarZFEnDNSService {
+    rpc ModificarZFEnDNS(Modificacion) returns (RespuestaDNS) {}
+}
+
+message Modificacion {
+    string accion = 1;
+    string valor_afectado = 2;
+    string nuevo_valor = 3;
+}
+
+message RespuestaBroker {
+    string IP = 1;
+}
+
+message RespuestaDNS {
+    string reloj = 2;
+}
