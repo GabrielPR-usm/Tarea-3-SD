@@ -14,7 +14,7 @@ import (
 func consultasServer(lis net.Listener) {
 	s := Consulta.Server{}
 	grpcServer := grpc.NewServer()
-	Consulta.RegisterConsultaServiceServer(grpcServer, &s)
+	Consulta.RegisterConsultaBrokerServiceServer(grpcServer, &s)
 	fmt.Println("DNS 1 Escuchando a las consultas de los clientes")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve consultas: %s", err)
@@ -24,7 +24,7 @@ func consultasServer(lis net.Listener) {
 func modificacionesServer(lis net.Listener) {
 	s := ModificarZF.Server{}
 	grpcServer := grpc.NewServer()
-	Consulta.RegisterModificarZFServiceServer(grpcServer, &s)
+	Consulta.RegisterModificarZFEnDNSServiceServer(grpcServer, &s)
 	fmt.Println("DNS 1 Escuchando las modificaciones del admin")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve modificaciones: %s", err)
@@ -55,6 +55,6 @@ func main() {
 	go func(){
 		modificacionesServer(lis)
 	}()
-	
+
 	compartirServer(lis)
 }
