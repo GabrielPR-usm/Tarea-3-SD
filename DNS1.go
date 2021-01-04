@@ -11,7 +11,7 @@ import (
 
 )
 
-func consultasServer(lis net.Listener) {
+func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de los clientes
 	s := Consulta.Server{}
 	grpcServer := grpc.NewServer()
 	Consulta.RegisterConsultaBrokerServiceServer(grpcServer, &s)
@@ -21,7 +21,7 @@ func consultasServer(lis net.Listener) {
 	}
 }
 
-func modificacionesServer(lis net.Listener) {
+func modificacionesServer(lis net.Listener) {//Admin le envia la operacion CRUD a DNS
 	s := ModificarZF.Server{}
 	grpcServer := grpc.NewServer()
 	Consulta.RegisterModificarZFEnDNSServiceServer(grpcServer, &s)
@@ -31,7 +31,7 @@ func modificacionesServer(lis net.Listener) {
 	}
 }
 
-func compartirServer(lis net.Listener) {
+func compartirServer(lis net.Listener) {//DNSs comparten sus ZF para llevar a cabo la consistencia
 	s := CompartirZF.Server{}
 	grpcServer := grpc.NewServer()
 	Consulta.RegisterCompartirZFServiceServer(grpcServer, &s)
