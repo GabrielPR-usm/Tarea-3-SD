@@ -8,6 +8,7 @@ import (
 	//"google.golang.org/grpc"
 	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Globals"
+	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
 	"io/ioutil"
 	"os"
 	"strconv"
@@ -17,48 +18,71 @@ import (
 
 type Server struct{
 }
+func random(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
 
-func (s *Server) ModificarZFRequest(ctx context.Context, modif *Modificacion) (*RespuestaBroker, error) {
+var t time.Duration = 1500000000
 
-	fmt.Println("Guardando distribucion de chunks en LOG")
-	//start := time.Now()
+func (s *Server) ModificarZFRequest(ctx context.Context, solicitud *Solicitud) (*RespuestaBroker, error) {
+	servers := make([]string, 3)
+	servers[0] = ":8500"
+	servers[1] = ":7500"
+	servers[2] = ":6500"
+	var puerto string="";
+	var aleatorio int=-1;
+	for flag:=false;flag==false;{
+		aleatorio=random(0,3)
+		var conn *grpc.ClientConn
+		conn, err = grpc.Dial(servers[aleatorio], grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(t))
+		if err != nil{
+			log.Fatalf("could not connect: %s",err)
+			continue
+		}
+		defer conn.Close()
 
-	/* GUARDAR EN LOG */
-	/*
-	fi, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	if err != nil {
-		panic(err)
+		c := ModificarZF.NewVerificarServiceClient(conn)
+		message0 := ModificarZF.Enviodom{
+			Dominio:solicitud.Dominio,
+		}
+		response,err := c.Verificar(context.Background(),&message)
+		if err!= nil{
+			log.Fatalf("Error in Operacion: %s",err)
+		}
+		var t1 []string = strings.Split(solicitud.Reloj, ",");
+		var t2 []string = strings.Split(response.Reloj, ",");
+		var count int =0
+		var indice int = 0
+		for;indice<3;indice++{
+			value1,err := strconv.Atoi(t1[indice])
+			if err!= nil{
+				log.Fatalf("Error in Operacion: %s",err)
+			}
+			value2,err1 := strconv.Atoi(t2[indice])
+			if err1!= nil{
+				log.Fatalf("Error in Operacion: %s",err1)
+			}
+			if(value2>=value1){
+				count++
+			}
+		}
+		fmt.Println(count)
+		if count==3{
+			flag=true
+			puerto=servers[aleatorio]
+		}
 	}
-	fi.WriteString(noti.BookName + " " + strconv.FormatUint(uint64(noti.NChunks1+noti.NChunks2+noti.NChunks3), 10) + "\n")
-	
-	var i int64 = 0
-	for ;i<noti.NChunks1 ;i++{
-		fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto1+"\n")
+	retorno:=RespuestaBroker{
+		IPserver:puerto,
 	}
-	for ;i<(noti.NChunks1 +noti.NChunks2);i++{
-	 	fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto2+"\n")
-	}
-	for ;i<(noti.NChunks1 +noti.NChunks2 +noti.NChunks3);i++{
-	   	fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto3+"\n")
-	}
-	fi.Close()
-	
-	elapsed := time.Since(start)
-	fmt.Println("Archivo LOG creado satisfactoriamente")
-	fmt.Println("EXECUTION TIME: ", elapsed)
-	
-	*/
-	resp := RespuestaBroker {
-		IP: "GUARDADO EXITOSAMENTE EN LOG",
-	}
-
-	return &resp, nil
+	return &retorno,nil
 }
 
 func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*RespuestaDNS, error) {
 
 	fmt.Println("Realizando " + modif.Accion + " de " + modif.ValorAfectado)
-	
+
 	NombreDominio := strings.Split(modif.ValorAfectado, ".")
 	flag := false
 
@@ -82,7 +106,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 			resp := RespuestaDNS {
 				Reloj: "[" + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) + "]",
 			}
-		
+
 			return &resp, nil
 		}
 
@@ -127,7 +151,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 		if erro != nil {
 			log.Fatalln(erro)
 		}
-		
+
 	}
 
 	//Escribo el cambio en el LOG del archivo ZF correspondiente

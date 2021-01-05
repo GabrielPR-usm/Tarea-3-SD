@@ -2,11 +2,14 @@ syntax = "proto3";
 package ModificarZF;
 
 service ModificarZFRequestService {
-    rpc ModificarZFRequest(Modificacion) returns (RespuestaBroker) {}
+    rpc ModificarZFRequest(Solicitud) returns (RespuestaBroker) {}
 }
 
 service ModificarZFEnDNSService {
     rpc ModificarZFEnDNS(Modificacion) returns (RespuestaDNS) {}
+}
+service VerificarService{
+    rpc Verificar(Enviodom) returns (RespuestaDNS) {}
 }
 
 message Modificacion {
@@ -15,10 +18,19 @@ message Modificacion {
     string nuevo_valor = 3;
 }
 
+message Solicitud {
+    string Dominio = 1;
+    string Reloj = 2;
+}
+
 message RespuestaBroker {
-    string IP = 1;
+    string IPserver = 1;
 }
 
 message RespuestaDNS {
     string reloj = 1;
+}
+
+message Enviodom{
+    string Dominio = 1;
 }
