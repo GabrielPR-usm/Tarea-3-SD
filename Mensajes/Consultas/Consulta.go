@@ -1,18 +1,19 @@
 package Consulta
 
 import (
-	"log"
+	//"log"
   	"golang.org/x/net/context"
-	"io"
+	//"io"
 	"fmt"
-	"google.golang.org/grpc"
-	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
-	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
-	"github.com/GabrielPR-usm/Tarea-3-SD/"
+	//"google.golang.org/grpc"
+	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
+	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
+	"github.com/GabrielPR-usm/Tarea-3-SD/Globals"
 	"io/ioutil"
-	"os"
+	//"os"
 	"strconv"
-	"time"
+	//"time"
+	"strings"
 )
 
 type Server struct{
@@ -21,36 +22,59 @@ type Server struct{
 
 func (s *Server) ConsultaCliente(ctx context.Context, consul *Consulta) (*Respuesta, error) {
 
-	fmt.Println("Guardando distribucion de chunks en LOG")
-	start := time.Now()
+	fmt.Println("Analizando Request")
+	servers := make([]string, 3)
+	servers[0] = ":8500"
+	servers[1] = ":7500"
+	servers[2] = ":6500"
+	var puerto string="";
+	var aleatorio int=-1;
+	for flag:=false;flag==false;{
+		aleatorio=random(0,3)
+		var conn *grpc.ClientConn
+		fmt.Println("Aleatorio " + servers[aleatorio])
+		conn, err := grpc.Dial(servers[aleatorio], grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(t))
+		if err != nil{
+			fmt.Println("could not connect: %s",err)
+			continue
+		}
+		defer conn.Close()
 
-	/* GUARDAR EN LOG */
-	/*
-	fi, err := os.OpenFile("log.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-	if err != nil {
-		panic(err)
+		c := NewVerificarServiceClient(conn)
+		message0 := Enviodom{
+			Dominio:solicitud.Dominio,
+		}
+		response,err := c.Verificar(context.Background(),&message0)
+		if err!= nil{
+			log.Fatalf("Error in Operacion: %s",err)
+		}
+		var t1 []string = strings.Split(solicitud.Reloj, ",");
+		var t2 []string = strings.Split(response.Reloj, ",");
+		var count int =0
+		var indice int = 0
+		for;indice<3;indice++{
+			value1,err := strconv.Atoi(t1[indice])
+			if err!= nil{
+				log.Fatalf("Error in Operacion: %s",err)
+			}
+			value2,err1 := strconv.Atoi(t2[indice])
+			if err1!= nil{
+				log.Fatalf("Error in Operacion: %s",err1)
+			}
+			if(value2>=value1){
+				count++
+			}
+		}
+		fmt.Println(count)
+		if count==3{
+			flag=true
+			puerto=servers[aleatorio]
+		}
 	}
-	fi.WriteString(noti.BookName + " " + strconv.FormatUint(uint64(noti.NChunks1+noti.NChunks2+noti.NChunks3), 10) + "\n")
-	
-	var i int64 = 0
-	for ;i<noti.NChunks1 ;i++{
-		fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto1+"\n")
-	}
-	for ;i<(noti.NChunks1 +noti.NChunks2);i++{
-	 	fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto2+"\n")
-	}
-	for ;i<(noti.NChunks1 +noti.NChunks2 +noti.NChunks3);i++{
-	   	fi.WriteString(noti.BookName+"_parte_"+ strconv.FormatUint(uint64(i), 10)+" "+noti.Puerto3+"\n")
-	}
-	fi.Close()
-	
-	elapsed := time.Since(start)
-	fmt.Println("Archivo LOG creado satisfactoriamente")
-	fmt.Println("EXECUTION TIME: ", elapsed)
-	
-	*/
+
 	resp := Respuesta {
-		Resultado: "GUARDADO EXITOSAMENTE EN LOG",
+		IP: "GUARDADO EXITOSAMENTE EN LOG",
+		Reloj: "",
 	}
 
 	return &resp, nil
@@ -68,7 +92,7 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 		fmt.Println("No se ha encontrado el archivo ZF-" + NombreDominio[1])
 		resp := Respuesta {
 			IP: ip,
-			Reloj: "[" + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) + "]",
+			Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
 		}
 	
 		return &resp, nil
@@ -76,7 +100,7 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 
 	lines := strings.Split(string(input), "\n")
 
-	for i, line := range lines {
+	for _, line := range lines {
 		if strings.Contains(line, consul.NombreDominio) {
 			ip = strings.Split(line, " ")[3]
 		}
@@ -84,7 +108,7 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 
 	resp := Respuesta {
 		IP: ip,
-		Reloj: "[" + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) + "]",
+		Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
 	}
 
 	return &resp, nil

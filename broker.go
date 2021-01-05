@@ -9,8 +9,6 @@ import (
 
 )
 
-
-
 func main() {
 
 	lis, err := net.Listen("tcp", ":9500")
@@ -23,7 +21,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 
 	//REGISTRO DE SERVICIOS
-	ModificarZF.RegisterMOdificarZFRequestServiceServer(grpcServer, &s)
+	ModificarZF.RegisterModificarZFRequestServiceServer(grpcServer, &s)
+	
 	//FIN REGISTRO DE SERVICIOS
 	fmt.Println("BROKER ESCUCHANDO")
 	if err := grpcServer.Serve(lis); err != nil {

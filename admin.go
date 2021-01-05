@@ -13,11 +13,11 @@ import(
 	"google.golang.org/grpc"
 	//"io"
 	//"math"
-	"math/rand"
+	//"math/rand"
 	//"os"
 	//"path/filepath"
-	"strconv"
-	"time"
+	//"strconv"
+	//"time"
   "strings"
 )
 
@@ -42,7 +42,7 @@ func main(){
       var nomdom string;
       fmt.Println("Ingrese el nombre.dominio: ")
       fmt.Scan(&nomdom)
-      var nombre string = strings.Split(nomdom,".")[0]
+      //var nombre string = strings.Split(nomdom,".")[0]
       var dominio string = strings.Split(nomdom,".")[1]
       //fmt.Println(nombre)
       //fmt.Println(dominio)
@@ -53,8 +53,8 @@ func main(){
         fmt.Scan(&Newip)
         //fmt.Println(Newip)
         //fmt.Println(diccionario)
-        var reloj string = "000";
-        for k := range diccionario {
+        var reloj string = "0,0,0";
+        for k, _ := range diccionario {
           if(k==dominio){
             reloj = strings.Split(diccionario[dominio],"-")[0]
           }
@@ -72,11 +72,11 @@ func main(){
           Reloj:reloj,
         }
 
-        response0,err := d.ModificarZFRequest(context.Background(),&message0)
+        response0,err0 := d.ModificarZFRequest(context.Background(),&message0)
         if err0!= nil{
           log.Fatalf("Error in Operacion: %s",err0)
         }
-        //fmt.Println(response0.IPserver)
+        fmt.Println(response0.IPserver)
         var conn *grpc.ClientConn
         conn, err = grpc.Dial(response0.IPserver, grpc.WithInsecure(), grpc.WithBlock())
         if err != nil{
@@ -114,8 +114,8 @@ func main(){
         }
         //fmt.Println(Newip)
         //fmt.Println(diccionario)
-        var reloj string = "000";
-        for k := range diccionario {
+        var reloj string = "0,0,0";
+        for k, _ := range diccionario {
           if(k==dominio){
             reloj = strings.Split(diccionario[dominio],"-")[0]
           }
@@ -160,9 +160,9 @@ func main(){
 
       }
       if(deseo==3){
-        var reloj string = "000";
-        var Newip string = "0.0.0.0"
-        for k := range diccionario {
+        var reloj string = "0,0,0";
+        //var Newip string = "0.0.0.0"
+        for k, _ := range diccionario {
           if(k==dominio){
             reloj = strings.Split(diccionario[dominio],"-")[0]
           }

@@ -8,6 +8,7 @@ service ModificarZFRequestService {
 service ModificarZFEnDNSService {
     rpc ModificarZFEnDNS(Modificacion) returns (RespuestaDNS) {}
 }
+
 service VerificarService{
     rpc Verificar(Enviodom) returns (RespuestaDNS) {}
 }

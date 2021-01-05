@@ -5,15 +5,15 @@ import (
   	"golang.org/x/net/context"
 	//"io"
 	"fmt"
-	//"google.golang.org/grpc"
+	"google.golang.org/grpc"
 	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Globals"
-	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
 	"io/ioutil"
 	"os"
 	"strconv"
-	//"time"
+	"time"
 	"strings"
+	"math/rand"
 )
 
 type Server struct{
@@ -26,6 +26,7 @@ func random(min int, max int) int {
 var t time.Duration = 1500000000
 
 func (s *Server) ModificarZFRequest(ctx context.Context, solicitud *Solicitud) (*RespuestaBroker, error) {
+	fmt.Println("Analizando Request")
 	servers := make([]string, 3)
 	servers[0] = ":8500"
 	servers[1] = ":7500"
@@ -35,18 +36,19 @@ func (s *Server) ModificarZFRequest(ctx context.Context, solicitud *Solicitud) (
 	for flag:=false;flag==false;{
 		aleatorio=random(0,3)
 		var conn *grpc.ClientConn
-		conn, err = grpc.Dial(servers[aleatorio], grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(t))
+		fmt.Println("Aleatorio " + servers[aleatorio])
+		conn, err := grpc.Dial(servers[aleatorio], grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(t))
 		if err != nil{
-			log.Fatalf("could not connect: %s",err)
+			fmt.Println("could not connect: %s",err)
 			continue
 		}
 		defer conn.Close()
 
-		c := ModificarZF.NewVerificarServiceClient(conn)
-		message0 := ModificarZF.Enviodom{
+		c := NewVerificarServiceClient(conn)
+		message0 := Enviodom{
 			Dominio:solicitud.Dominio,
 		}
-		response,err := c.Verificar(context.Background(),&message)
+		response,err := c.Verificar(context.Background(),&message0)
 		if err!= nil{
 			log.Fatalf("Error in Operacion: %s",err)
 		}
@@ -94,7 +96,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 			panic(errz)
 		}
 
-		fiz.WriteString("www." + modif.ValorAfectado + " IN A " + modif.NuevoValor + "\n")
+		fiz.WriteString("\nwww." + modif.ValorAfectado + " IN A " + modif.NuevoValor)
 
 		fiz.Close()
 
@@ -104,7 +106,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 		if erro != nil {
 			fmt.Println("No se ha encontrado el archivo ZF-" + NombreDominio[1])
 			resp := RespuestaDNS {
-				Reloj: "[" + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) + "]",
+				Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) ,
 			}
 
 			return &resp, nil
@@ -169,7 +171,18 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 	}
 
 	resp := RespuestaDNS {
-		Reloj: "[" + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) + "]",
+		Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
+	}
+
+	return &resp, nil
+}
+
+func (s *Server) Verificar(ctx context.Context, dominio *Enviodom) (*RespuestaDNS, error) {
+
+	fmt.Println("Verificando")
+
+	resp := RespuestaDNS {
+		Reloj: strconv.Itoa(Globals.RVDNS1[dominio.Dominio][0]) + "," + strconv.Itoa(Globals.RVDNS1[dominio.Dominio][1]) + "," + strconv.Itoa(Globals.RVDNS1[dominio.Dominio][2]),
 	}
 
 	return &resp, nil
