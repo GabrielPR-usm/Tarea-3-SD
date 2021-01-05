@@ -20,5 +20,5 @@ message RespuestaBroker {
 }
 
 message RespuestaDNS {
-    string reloj = 2;
+    string reloj = 1;
 }

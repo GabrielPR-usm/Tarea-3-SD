@@ -5,12 +5,14 @@ import (
 	"net"
 	"fmt"
 	"google.golang.org/grpc"
-	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Consultas"
-	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
+	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Consultas"
+	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
+	//"github.com/GabrielPR-usm/Tarea-3-SD/Globals"
 
 )
 
+/*
 func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de los clientes
 	s := Consulta.Server{}
 	grpcServer := grpc.NewServer()
@@ -20,17 +22,19 @@ func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de
 		log.Fatalf("failed to serve consultas: %s", err)
 	}
 }
+*/
 
 func modificacionesServer(lis net.Listener) {//Admin le envia la operacion CRUD a DNS
 	s := ModificarZF.Server{}
 	grpcServer := grpc.NewServer()
-	Consulta.RegisterModificarZFEnDNSServiceServer(grpcServer, &s)
+	ModificarZF.RegisterModificarZFEnDNSServiceServer(grpcServer, &s)
 	fmt.Println("DNS 1 Escuchando las modificaciones del admin")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve modificaciones: %s", err)
 	}
 }
 
+/*
 func compartirServer(lis net.Listener) {//DNSs comparten sus ZF para llevar a cabo la consistencia
 	s := CompartirZF.Server{}
 	grpcServer := grpc.NewServer()
@@ -40,14 +44,16 @@ func compartirServer(lis net.Listener) {//DNSs comparten sus ZF para llevar a ca
 		log.Fatalf("failed to serve consistencia: %s", err)
 	}
 }
+*/
 
 func main() {
 
-	lis, err := net.Listen("tcp", ":1000")
+	lis, err := net.Listen("tcp", ":6500")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
+	/*
 	go func(){
 		consultasServer(lis)
 	}()
@@ -57,4 +63,7 @@ func main() {
 	}()
 
 	compartirServer(lis)
+*/
+
+	modificacionesServer(lis)
 }
