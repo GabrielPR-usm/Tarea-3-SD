@@ -58,7 +58,7 @@ func (s *Server) Notificar(ctx context.Context, noti *Notificacion) (*Respuesta,
 	}else{
 		defer conn1.Close()
 	}
-	
+
 	for _, file := range files {
 
 		path := "./Registros/" + file
@@ -125,12 +125,11 @@ func (s *Server) Mergear(ctx context.Context, mer *Merge) (*Respuesta, error) {
 
 	changes := strings.Split(mer.FileAsStr, "\n")
 	var current []string
-
 	input, erro := ioutil.ReadFile("./Registros/ZF-" + mer.Dominio)
 	if erro != nil {
 		fmt.Println("No se ha encontrado el archivo ZF-" + mer.Dominio)
 	}else{
-		current := strings.Split(string(input), "\n")
+		current = strings.Split(string(input), "\n")
 	}
 
 	fmt.Printf(mer.Dominio + " ")
@@ -191,7 +190,7 @@ func (s *Server) Mergear(ctx context.Context, mer *Merge) (*Respuesta, error) {
 }
 
 func (s *Server) MergeDone(ctx context.Context, pears *Pears) (*Respuesta, error) {
-	//Orquestador recibe esta notificacion y envia los archivos ZF a los otros DNS	
+	//Orquestador recibe esta notificacion y envia los archivos ZF a los otros DNS
 
 	fmt.Println("Enviando archivos ZF a los otros DNS")
 	var files []string
@@ -204,10 +203,10 @@ func (s *Server) MergeDone(ctx context.Context, pears *Pears) (*Respuesta, error
 			files = append(files, info.Name())
 		}
 		if strings.Contains(info.Name(), "log") {
-			e := os.Remove("./Registros" + info.Name()) 
-			if e != nil { 
+			e := os.Remove("./Registros" + info.Name())
+			if e != nil {
 				fmt.Println("No se pudo remover " + info.Name())
-			} 
+			}
 		}
         return nil
     })
@@ -255,7 +254,7 @@ func (s *Server) MergeDone(ctx context.Context, pears *Pears) (*Respuesta, error
 			defer conn3.Close()
 		}
 	}
-	
+
 	for _, file := range files {
 
 		path := "./Registros/" + file
@@ -308,7 +307,7 @@ func (s *Server) MergeDone(ctx context.Context, pears *Pears) (*Respuesta, error
 				fmt.Println(pears.Status3 + "Recibio el archivo")
 			}
 		}
-		
+
 	}
 
 	resp := Respuesta {

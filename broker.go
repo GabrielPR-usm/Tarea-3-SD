@@ -7,18 +7,15 @@ import (
 	"time"
 	"google.golang.org/grpc"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
-<<<<<<< HEAD
+	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Consultas"
-
-
+	"golang.org/x/net/context"
 )
 
-=======
-	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 
-)
 
-var t time.Duration = 5000000000
+
+var t time.Duration = 1500000000
 
 func mergeen() {
 
@@ -141,8 +138,7 @@ func mergeen() {
 	}
 }
 
-func main() {
->>>>>>> 9f0391564c758d86f79c1849b8d34f9db9ed6f4b
+
 
 func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de los clientes
 	c := Consulta.Server{}
@@ -155,21 +151,10 @@ func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de
 }
 
 
-<<<<<<< HEAD
+
 func modificacionesServer(lis net.Listener) {//Admin le envia la operacion CRUD a DNS
-=======
-	go func () {
-		for true {
-			mergeen()
-			time.Sleep(5 * 60 * time.Second)
-		}
-	}()
-
->>>>>>> 9f0391564c758d86f79c1849b8d34f9db9ed6f4b
 	s := ModificarZF.Server{}
-
 	grpcServer := grpc.NewServer()
-
 	//REGISTRO DE SERVICIOS
 	ModificarZF.RegisterModificarZFRequestServiceServer(grpcServer, &s)
 	//Consultas.RegisterConsultaClienteServiceServer(grpcServer, &s)
@@ -180,19 +165,6 @@ func modificacionesServer(lis net.Listener) {//Admin le envia la operacion CRUD 
 	}
 }
 
-
-
-/*
-func compartirServer(lis net.Listener) {//DNSs comparten sus ZF para llevar a cabo la consistencia
-	s := CompartirZF.Server{}
-	grpcServer := grpc.NewServer()
-	Consulta.RegisterCompartirZFServiceServer(grpcServer, &s)
-	fmt.Println("DNS 1 Escuchando otros DNS para hacer consistencia")
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("failed to serve consistencia: %s", err)
-	}
-}
-*/
 
 func main() {
 
@@ -209,6 +181,12 @@ func main() {
 
 	go func(){
 		consultasServer(lis2)
+	}()
+	go func () {
+		for true {
+			time.Sleep(5 * 60 * time.Second)
+			mergeen()
+		}
 	}()
 	modificacionesServer(lis1)
 

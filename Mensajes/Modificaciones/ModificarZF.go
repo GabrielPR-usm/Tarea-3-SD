@@ -14,7 +14,7 @@ import (
 	"time"
 	"strings"
 	"math/rand"
-	"reflect"
+	//"reflect"
 )
 
 type Server struct{
@@ -102,6 +102,8 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 
 		fiz.Close()
 
+		flag=true
+
 	}else{
 
 		input, erro := ioutil.ReadFile("./Registros/ZF-" + NombreDominio[1])
@@ -171,7 +173,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 	if flag {
 		Globals.Setter(NombreDominio[1], DNSnum)
 	}
-
+	fmt.Println(Globals.GetClock(NombreDominio[1]))
 	resp := RespuestaDNS {
 		Reloj: Globals.GetClock(NombreDominio[1]),
 	}
@@ -184,7 +186,7 @@ func (s *Server) Verificar(ctx context.Context, dominio *Enviodom) (*RespuestaDN
 	fmt.Println("Verificando")
 
 	resp := RespuestaDNS {
-		Reloj: Globals.GetClock(dominio.Dominio),	
+		Reloj: Globals.GetClock(dominio.Dominio),
 	}
 
 	return &resp, nil

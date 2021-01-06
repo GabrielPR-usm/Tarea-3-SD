@@ -14,30 +14,18 @@ import (
 	"strconv"
 	"time"
 	"strings"
-<<<<<<< HEAD
-  "math/rand"
-=======
 	"math/rand"
-	"google.golang.org/grpc"
->>>>>>> 9f0391564c758d86f79c1849b8d34f9db9ed6f4b
 )
 
 type Server struct{
 }
-func random(min int, max int) int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min
-}
 
-<<<<<<< HEAD
 var t time.Duration = 1500000000
-=======
+
 func random(min int, max int) int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(max-min) + min
 }
-var t time.Duration = 5000000000
->>>>>>> 9f0391564c758d86f79c1849b8d34f9db9ed6f4b
 
 func (s *Server) ConsultaRequest(ctx context.Context, consul *Datos) (*RespuestaBroker, error) {
 
@@ -116,7 +104,7 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 		fmt.Println("No se ha encontrado el archivo ZF-" + NombreDominio[1])
 		resp := Respuesta {
 			IP: ip,
-			Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
+			Reloj: Globals.GetClock(NombreDominio[1]),
 		}
 
 		return &resp, nil
