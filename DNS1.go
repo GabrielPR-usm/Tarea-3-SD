@@ -17,7 +17,7 @@ func consultasServer(lis net.Listener) {//Broker le envia a DNS las consultas de
 	s := Consulta.Server{}
 	grpcServer := grpc.NewServer()
 	Consulta.RegisterConsultaBrokerServiceServer(grpcServer, &s)
-	fmt.Println("DNS 1 Escuchando a las consultas de los clientes")
+	fmt.Println("DNS 1 Escuchando a las consultas del Broker")
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve consultas: %s", err)
 	}
@@ -49,21 +49,19 @@ func compartirServer(lis net.Listener) {//DNSs comparten sus ZF para llevar a ca
 
 func main() {
 
-	lis, err := net.Listen("tcp", ":6500")
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+	lis1, err1 := net.Listen("tcp", ":6500")
+	if err1 != nil {
+		log.Fatalf("failed to listen: %v", err1)
 	}
 
-	go func(){
-		consultasServer(lis)
-	}()
-/*
-	go func(){
-		modificacionesServer(lis)
-	}()
+	lis2, err2 := net.Listen("tcp", ":6501")
+	if err2 != nil {
+		log.Fatalf("failed to listen: %v", err2)
+	}
 
-	compartirServer(lis)
-*/
 
-	modificacionesServer(lis)
+	go func(){
+		consultasServer(lis2)
+	}()
+	modificacionesServer(lis1)
 }

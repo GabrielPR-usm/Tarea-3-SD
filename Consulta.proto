@@ -1,12 +1,22 @@
 syntax = "proto3";
 package Consulta;
 
-service ConsultaClienteService {
-    rpc ConsultaCliente(Consulta) returns (Respuesta) {}
+service ConsultaRequestService {
+    rpc ConsultaRequest(Datos) returns (RespuestaBroker) {}
 }
 
 service ConsultaBrokerService {
     rpc ConsultaBroker(Consulta) returns (Respuesta) {}
+}
+
+message Datos{
+    string Url = 1;
+    string Reloj = 2;
+}
+
+message RespuestaBroker {
+    string IP = 1;
+    string Reloj = 2;
 }
 
 message Consulta {

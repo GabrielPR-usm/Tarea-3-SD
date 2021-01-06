@@ -1,8 +1,0 @@
-append google.com 12.12.12.1
-append gmail.com 1.1.1123.3
-delete gmail.com 
-delete google.com 
-append google.com 12.12.12.1
-append gmail.com 1.1.1.12
-update google.com gugul.com
-update gugul.com 12.12.12.12

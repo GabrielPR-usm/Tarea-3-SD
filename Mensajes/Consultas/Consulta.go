@@ -1,33 +1,40 @@
 package Consulta
 
 import (
-	//"log"
+	"log"
   	"golang.org/x/net/context"
 	//"io"
 	"fmt"
-	//"google.golang.org/grpc"
+	"google.golang.org/grpc"
 	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Compartir"
 	//"github.com/GabrielPR-usm/Tarea-3-SD/Mensajes/Modificaciones"
 	"github.com/GabrielPR-usm/Tarea-3-SD/Globals"
 	"io/ioutil"
 	//"os"
 	"strconv"
-	//"time"
+	"time"
 	"strings"
+  "math/rand"
 )
 
 type Server struct{
 }
+func random(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
 
+var t time.Duration = 1500000000
 
-func (s *Server) ConsultaCliente(ctx context.Context, consul *Consulta) (*Respuesta, error) {
+func (s *Server) ConsultaRequest(ctx context.Context, consul *Datos) (*RespuestaBroker, error) {
 
-	fmt.Println("Analizando Request")
+	fmt.Println("Analizando Request Cliente")
 	servers := make([]string, 3)
-	servers[0] = ":8500"
-	servers[1] = ":7500"
-	servers[2] = ":6500"
-	var puerto string="";
+	servers[0] = ":8501"
+	servers[1] = ":7501"
+	servers[2] = ":6501"
+	var Ipurl string=""
+  var Reloj string=""
 	var aleatorio int=-1;
 	for flag:=false;flag==false;{
 		aleatorio=random(0,3)
@@ -39,16 +46,16 @@ func (s *Server) ConsultaCliente(ctx context.Context, consul *Consulta) (*Respue
 			continue
 		}
 		defer conn.Close()
-
-		c := NewVerificarServiceClient(conn)
-		message0 := Enviodom{
-			Dominio:solicitud.Dominio,
+    var nomdom string = strings.Split(consul.Url,".")[1]+"."+ strings.Split(consul.Url,".")[2]
+		c := NewConsultaBrokerServiceClient(conn)
+		message0 := Consulta{
+			NombreDominio:nomdom,
 		}
-		response,err := c.Verificar(context.Background(),&message0)
+		response,err := c.ConsultaBroker(context.Background(),&message0)
 		if err!= nil{
 			log.Fatalf("Error in Operacion: %s",err)
 		}
-		var t1 []string = strings.Split(solicitud.Reloj, ",");
+		var t1 []string = strings.Split(consul.Reloj, ",");
 		var t2 []string = strings.Split(response.Reloj, ",");
 		var count int =0
 		var indice int = 0
@@ -68,22 +75,26 @@ func (s *Server) ConsultaCliente(ctx context.Context, consul *Consulta) (*Respue
 		fmt.Println(count)
 		if count==3{
 			flag=true
-			puerto=servers[aleatorio]
+			Ipurl=response.IP
+      Reloj=response.Reloj
 		}
 	}
 
-	resp := Respuesta {
-		IP: "GUARDADO EXITOSAMENTE EN LOG",
-		Reloj: "",
+	resp := RespuestaBroker {
+		IP: Ipurl,
+		Reloj: Reloj,
 	}
-
+	/*resp := RespuestaBroker {
+		IP: "121.12.12.12",
+		Reloj: "1,2,3",
+	}*/
 	return &resp, nil
 }
 
 func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respuesta, error) {
 
 	fmt.Println("Buscando " + consul.NombreDominio + " en los archivos ZF")
-	
+
 	NombreDominio := strings.Split(consul.NombreDominio, ".")
 	ip := "Not Found"
 
@@ -94,7 +105,7 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 			IP: ip,
 			Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
 		}
-	
+
 		return &resp, nil
 	}
 
@@ -110,6 +121,6 @@ func (s *Server) ConsultaBroker(ctx context.Context, consul *Consulta) (*Respues
 		IP: ip,
 		Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
 	}
-
+	fmt.Println(resp)
 	return &resp, nil
 }
