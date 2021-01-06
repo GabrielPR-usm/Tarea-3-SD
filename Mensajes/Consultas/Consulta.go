@@ -12,13 +12,20 @@ import (
 	"io/ioutil"
 	//"os"
 	"strconv"
-	//"time"
+	"time"
 	"strings"
+	"math/rand"
+	"google.golang.org/grpc"
 )
 
 type Server struct{
 }
 
+func random(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
+var t time.Duration = 5000000000
 
 func (s *Server) ConsultaCliente(ctx context.Context, consul *Consulta) (*Respuesta, error) {
 

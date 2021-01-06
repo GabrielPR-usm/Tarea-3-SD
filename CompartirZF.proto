@@ -9,17 +9,35 @@ service NotificacionService {
     rpc Notificar(Notificacion) returns (Respuesta) {}
 }
 
+service MergearService {
+    rpc Mergear(Merge) returns (Respuesta) {}
+}
+
+service MergeDoneService {
+    rpc MergeDone(Pears) returns (Respuesta) {}
+}
+
+message Merge {
+    string fileAsStr = 1;
+    string reloj = 2;
+    string Dominio = 3;
+}
+
 message Compartir {
-    bytes Content = 1;
-    string Name = 2;
-    string IP = 3;
-    string reloj = 4;
+    string ZFContent = 1;
+    string Dominio = 2;
+    string reloj = 3;
+}
+
+message Pears {
+    string Status1 = 1;
+    string Status2 = 2;
+    string Status3 = 3;
+    string Orchestrator = 4;
 }
 
 message Notificacion {
-    string DNStatus1 = 1;
-    string DNStatus2 = 2;
-    string DNStatus3 = 3;
+    string DNSOrchestrator = 1;
 }
 
 message Respuesta {

@@ -14,6 +14,7 @@ import (
 	"time"
 	"strings"
 	"math/rand"
+	"reflect"
 )
 
 type Server struct{
@@ -24,6 +25,7 @@ func random(min int, max int) int {
 }
 
 var t time.Duration = 1500000000
+var DNSnum int = 0//Utilizado para el reloj de vectores
 
 func (s *Server) ModificarZFRequest(ctx context.Context, solicitud *Solicitud) (*RespuestaBroker, error) {
 	fmt.Println("Analizando Request")
@@ -106,7 +108,7 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 		if erro != nil {
 			fmt.Println("No se ha encontrado el archivo ZF-" + NombreDominio[1])
 			resp := RespuestaDNS {
-				Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]) ,
+				Reloj: Globals.GetClock(NombreDominio[1]) ,
 			}
 
 			return &resp, nil
@@ -167,11 +169,11 @@ func (s *Server) ModificarZFEnDNS(ctx context.Context, modif *Modificacion) (*Re
 	fi.Close()
 
 	if flag {
-		Globals.SetterR1(NombreDominio[1])
+		Globals.Setter(NombreDominio[1], DNSnum)
 	}
 
 	resp := RespuestaDNS {
-		Reloj: strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][0]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][1]) + "," + strconv.Itoa(Globals.RVDNS1[NombreDominio[1]][2]),
+		Reloj: Globals.GetClock(NombreDominio[1]),
 	}
 
 	return &resp, nil
@@ -182,7 +184,7 @@ func (s *Server) Verificar(ctx context.Context, dominio *Enviodom) (*RespuestaDN
 	fmt.Println("Verificando")
 
 	resp := RespuestaDNS {
-		Reloj: strconv.Itoa(Globals.RVDNS1[dominio.Dominio][0]) + "," + strconv.Itoa(Globals.RVDNS1[dominio.Dominio][1]) + "," + strconv.Itoa(Globals.RVDNS1[dominio.Dominio][2]),
+		Reloj: Globals.GetClock(dominio.Dominio),	
 	}
 
 	return &resp, nil

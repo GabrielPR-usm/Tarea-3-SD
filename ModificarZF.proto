@@ -19,6 +19,10 @@ message Modificacion {
     string nuevo_valor = 3;
 }
 
+message RespuestaDNS {
+    string reloj = 1;
+}
+
 message Solicitud {
     string Dominio = 1;
     string Reloj = 2;
@@ -26,10 +30,6 @@ message Solicitud {
 
 message RespuestaBroker {
     string IPserver = 1;
-}
-
-message RespuestaDNS {
-    string reloj = 1;
 }
 
 message Enviodom{
