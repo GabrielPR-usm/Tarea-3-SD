@@ -27,23 +27,17 @@ func (s *Server) Notificar(ctx context.Context, noti *Notificacion) (*Respuesta,
 
 	fmt.Println("Espere un momento, se estan unificando los registros")
 	var files []string
-/*
-	dirname, err := os.Getwd()
-	if err != nil {
-		fmt.Println("No se puedo abrir " + dirname.Name())
-	}
 
-	dir, err := os.Open(path.Join(dirname, "../../"))
-	if err != nil {
-		fmt.Println("No se puedo abrir " + dir.Name())
-	}
-*/
     err := filepath.Walk("./Registros", func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			return nil
 		}
 		if strings.Contains(info.Name(), "log") {
 			files = append(files, info.Name())
+			e := os.Remove("./Registros/" + info.Name())
+			if e != nil {
+				fmt.Println("No se pudo remover " + info.Name())
+			}
 		}
         return nil
     })
@@ -203,7 +197,7 @@ func (s *Server) MergeDone(ctx context.Context, pears *Pears) (*Respuesta, error
 			files = append(files, info.Name())
 		}
 		if strings.Contains(info.Name(), "log") {
-			e := os.Remove("./Registros" + info.Name())
+			e := os.Remove("./Registros/" + info.Name())
 			if e != nil {
 				fmt.Println("No se pudo remover " + info.Name())
 			}

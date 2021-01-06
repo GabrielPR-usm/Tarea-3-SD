@@ -12,16 +12,13 @@ import (
 	"golang.org/x/net/context"
 )
 
-
-
-
 var t time.Duration = 1500000000
 
 func mergeen() {
 
-	s1 := ":6502"
-	s2 := ":7502"
-	s3 := ":8502"
+	s1 := "dist74:6502"
+	s2 := "dist75:7502"
+	s3 := "dist76:8502"
 
 	var conn1 *grpc.ClientConn
 	conn1, err1 := grpc.Dial(s1, grpc.WithInsecure(),grpc.WithBlock(), grpc.WithTimeout(t))

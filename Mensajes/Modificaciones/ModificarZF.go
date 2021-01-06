@@ -30,9 +30,9 @@ var DNSnum int = 0//Utilizado para el reloj de vectores
 func (s *Server) ModificarZFRequest(ctx context.Context, solicitud *Solicitud) (*RespuestaBroker, error) {
 	fmt.Println("Analizando Request")
 	servers := make([]string, 3)
-	servers[0] = ":8500"
-	servers[1] = ":7500"
-	servers[2] = ":6500"
+	servers[0] = "dist76:8500"
+	servers[1] = "dist75:7500"
+	servers[2] = "dist74:6500"
 	var puerto string="";
 	var aleatorio int=-1;
 	for flag:=false;flag==false;{

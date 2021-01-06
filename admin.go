@@ -60,7 +60,7 @@ func main(){
           }
         }
         var conn0 *grpc.ClientConn
-        conn0, err := grpc.Dial(":9500", grpc.WithInsecure(), grpc.WithBlock())
+        conn0, err := grpc.Dial("dist73:9500", grpc.WithInsecure(), grpc.WithBlock())
         if err != nil{
           log.Fatalf("could not connect: %s",err)
         }
@@ -121,7 +121,7 @@ func main(){
           }
         }
         var conn0 *grpc.ClientConn
-        conn0, err := grpc.Dial(":9500", grpc.WithInsecure(), grpc.WithBlock())
+        conn0, err := grpc.Dial("dist73:9500", grpc.WithInsecure(), grpc.WithBlock())
         if err != nil{
           log.Fatalf("could not connect: %s",err)
         }
@@ -168,7 +168,7 @@ func main(){
           }
         }
         var conn0 *grpc.ClientConn
-        conn0, err := grpc.Dial(":9500", grpc.WithInsecure(), grpc.WithBlock())
+        conn0, err := grpc.Dial("dist73:9500", grpc.WithInsecure(), grpc.WithBlock())
         if err != nil{
           log.Fatalf("could not connect: %s",err)
         }
