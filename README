@@ -1,0 +1,28 @@
+Grupo      : Gamacorp
+
+Integrantes: Martín Menares 201573536-0
+	     Gabriel Pezoa  201673562-3
+	     
+El cliente y el administrador pueden correr desde cualquiera de las máquinas ejecutando
+respectivamente:
+
+------------> make cliente
+------------> make admin
+
+Para los dns y el broker se tiene la siguiente asignación de máquinas virtuales:
+
+dist73: broker ------->make broker
+
+dist74: dns1   ------->make dns1
+
+dist75: dns2   ------->make dns2
+
+dist76: dns3   ------->make dns3
+
+
+RECOMENDACIONES:
+
+->En cuanto al cliente se recomienda ingresar una página web tal como 
+  se hace en la normalidad: www.ejemplo.cl
+
+->En cuanto al administrador se recomienda ingresar los datos tal como indica la pantalla ejemplo "nombre.dominio" y la IP "127.25.23.26"
