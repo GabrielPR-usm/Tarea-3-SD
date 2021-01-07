@@ -31,9 +31,9 @@ func (s *Server) ConsultaRequest(ctx context.Context, consul *Datos) (*Respuesta
 
 	fmt.Println("Analizando Request Cliente")
 	servers := make([]string, 3)
-	servers[0] = ":8501"
-	servers[1] = ":7501"
-	servers[2] = ":6501"
+	servers[0] = "dist76:8501"
+	servers[1] = "dist75:7501"
+	servers[2] = "dist74:6501"
 	var Ipurl string=""
   var Reloj string=""
 	var aleatorio int=-1;

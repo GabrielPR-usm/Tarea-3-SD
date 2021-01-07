@@ -2,11 +2,11 @@ Grupo      : Gamacorp
 
 Integrantes: Martín Menares 201573536-0
 	     Gabriel Pezoa  201673562-3
-	     
-El cliente y el administrador pueden correr desde cualquiera de las máquinas ejecutando
+
+El cliente y el administrador pueden correr sólo pueden correr desde el broker ejecutando
 respectivamente:
 
-------------> make cliente
+------------> make client
 ------------> make admin
 
 Para los dns y el broker se tiene la siguiente asignación de máquinas virtuales:
@@ -22,7 +22,11 @@ dist76: dns3   ------->make dns3
 
 RECOMENDACIONES:
 
-->En cuanto al cliente se recomienda ingresar una página web tal como 
+->En cuanto al cliente se recomienda ingresar una página web tal como
   se hace en la normalidad: www.ejemplo.cl
 
 ->En cuanto al administrador se recomienda ingresar los datos tal como indica la pantalla ejemplo "nombre.dominio" y la IP "127.25.23.26"
+
+ADVERTERCIA
+
+El merge falla con los 3 dns activos. Todo funciona bien con un sólo dns activo.
